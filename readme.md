@@ -1,9 +1,94 @@
+<div align="center">
+<a href="https://github.com/Haeryz/LegalLLM"><img src="https://img.shields.io/badge/LegalLLM-Indonesia-blue?style=for-the-badge&logo=scales" width="200"></a>
+<a href="https://colab.research.google.com/drive/1nHWwPOAc5E5H-0O6I985ftvr_hJzy3ey?usp=sharing"><img src="https://img.shields.io/badge/Fine--tuning-Colab-orange?style=for-the-badge&logo=googlecolab" width="150"></a>
+<a href="https://huggingface.co/Haeryz/legal-gemma3-id-16bit"><img src="https://img.shields.io/badge/🤗-Model-yellow?style=for-the-badge" width="120"></a>
+<a href="https://colab.research.google.com/drive/1vzoGxEQMKi1PKQhTyyCyqLHE8Z97K8DY?usp=sharing"><img src="https://img.shields.io/badge/Evaluation-Colab-green?style=for-the-badge&logo=googlecolab" width="140"></a>
+
+⭐ <i>Star us on <a href="https://github.com/Haeryz/LegalLLM">Github</a> </i> ⭐ | 📊 <a href="https://drive.google.com/drive/folders/14kWdffZru_ePZ4B58EzS3EO5cW-FLNRa?usp=sharing">Dataset</a> | 🚀 <a href="https://colab.research.google.com/drive/1nHWwPOAc5E5H-0O6I985ftvr_hJzy3ey?usp=sharing">Quick Start</a>
+</div>
+
+---
+
 # LegalLLM Indonesia: Fine-tuning Model untuk Analisis Hukum Indonesia
 
 **Subtitle:** Pengembangan Model Bahasa Besar untuk Analisis Dokumen Hukum Indonesia  
 **Autor:** Muhammad Hariz Faizul Anwar & Nizam Arif  
 **Institusi:** Universitas Muhammadiyah Malang  
 **Tanggal:** 17 Juli 2025
+
+---
+
+## 📋 Daftar Isi
+
+1. [🚀 Quick Start](#-quick-start)
+2. [📖 Ringkasan Eksekutif](#ringkasan-eksekutif)
+3. [⚠️ Permasalahan](#permasalahan)
+4. [📊 Gambaran Dataset](#gambaran-dataset)
+5. [⚙️ Pipeline Fine-tuning](#pipeline-fine-tuning)
+6. [🤖 Artifacts Model](#artifacts-model)
+7. [📏 Desain Evaluasi](#desain-evaluasi)
+8. [📈 Tabel Hasil](#tabel-hasil)
+9. [⚠️ Keterbatasan & Risiko](#keterbatasan--risiko)
+10. [📝 Panduan Penggunaan](#panduan-penggunaan)
+11. [🔄 Reproducibility](#reproducibility)
+12. [🚧 Rencana Pengembangan](#rencana-pengembangan)
+13. [📎 Appendices](#appendices)
+
+---
+
+## 🚀 Quick Start
+
+### ✨ Fitur Utama
+- 🎯 **Spesialisasi Hukum Indonesia** - Dilatih khusus pada putusan pengadilan Indonesia
+- ⚡ **Efficient Fine-tuning** - Menggunakan Unsloth untuk training 2x lebih cepat
+- 🔧 **Production Ready** - Model siap pakai dalam format 16-bit dan GGUF
+- 📱 **Easy Integration** - Compatible dengan Hugging Face ecosystem
+- 🌐 **Bahasa Indonesia Native** - Memahami konteks dan terminologi hukum Indonesia
+- 💡 **Analisis Mendalam** - Menghasilkan analisis hukum yang komprehensif dan terstruktur
+
+### 🎯 Coba Model Langsung
+```python
+# Install dependencies
+!pip install transformers torch
+
+# Load model dan tokenizer
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import torch
+
+model_name = "Haeryz/legal-gemma3-id-16bit"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
+
+# Analisis putusan pengadilan
+prompt = """Analisis mendalam putusan ini:
+
+Putusan Pengadilan Negeri Jakarta
+Nomor: 123/Pid/2024/PN Jkt
+Terdakwa: [Nama Terdakwa]
+Dakwaan: Pasal 374 ayat 1 KUHP (penggelapan dalam jabatan)
+Ringkasan: [Masukkan ringkasan kasus di sini]
+
+Jawaban:"""
+
+inputs = tokenizer(prompt, return_tensors="pt")
+outputs = model.generate(
+    inputs.input_ids,
+    max_new_tokens=512,
+    temperature=0.7,
+    do_sample=True
+)
+
+response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+print(response)
+```
+
+### 🔬 Atau Gunakan Google Colab
+- 🚀 **[Training Notebook](https://colab.research.google.com/drive/1nHWwPOAc5E5H-0O6I985ftvr_hJzy3ey?usp=sharing)** - Fine-tune model Anda sendiri
+- 📊 **[Evaluation Notebook](https://colab.research.google.com/drive/1vzoGxEQMKi1PKQhTyyCyqLHE8Z97K8DY?usp=sharing)** - Evaluasi performa model
 
 ---
 
@@ -48,8 +133,11 @@ Analisis dokumen hukum Indonesia menghadapi beberapa tantangan:
 - **Pembagian Data:** 85% training, 15% validation (seed=3407)
 - **Lisensi:** Data publik dari Mahkamah Agung RI
 
-### Link Data
-- 📁 [Raw Data (Google Drive)](https://drive.google.com/drive/folders/14kWdffZru_ePZ4B58EzS3EO5cW-FLNRa?usp=sharing)
+### Link Data dan Resources
+- 📁 **Raw Data:** [Google Drive Dataset](https://drive.google.com/drive/folders/14kWdffZru_ePZ4B58EzS3EO5cW-FLNRa?usp=sharing)
+- 🚀 **Fine-tuning Notebook:** [Google Colab](https://colab.research.google.com/drive/1nHWwPOAc5E5H-0O6I985ftvr_hJzy3ey?usp=sharing)
+- 📊 **Evaluation Notebook:** [Google Colab](https://colab.research.google.com/drive/1vzoGxEQMKi1PKQhTyyCyqLHE8Z97K8DY?usp=sharing)
+- 🤗 **Model Repository:** [Hugging Face](https://huggingface.co/Haeryz/legal-gemma3-id-16bit)
 
 ---
 
@@ -94,7 +182,9 @@ max_seq_length = 2048
 ## Artifacts Model
 
 ### Model Checkpoints
-- 🤗 **Hugging Face Repository:** [legal-gemma3-id-16bit](https://huggingface.co/Haeryz/legal-gemma3-id-16bit)
+- 🤗 **Hugging Face Repository:** [Haeryz/legal-gemma3-id-16bit](https://huggingface.co/Haeryz/legal-gemma3-id-16bit)
+- 🚀 **Fine-tuning Colab:** [Training Notebook](https://colab.research.google.com/drive/1nHWwPOAc5E5H-0O6I985ftvr_hJzy3ey?usp=sharing)
+- 📊 **Evaluation Colab:** [Evaluation Notebook](https://colab.research.google.com/drive/1vzoGxEQMKi1PKQhTyyCyqLHE8Z97K8DY?usp=sharing)
 - **Format Tersedia:**
   - 16-bit merged model (production ready)
   - LoRA adapters (untuk further fine-tuning)
@@ -284,8 +374,8 @@ print(response)
 ```
 
 ### Google Colab Links
-- 🔧 [Fine-tuning Notebook](https://colab.research.google.com/drive/1nHWwPOAc5E5H-0O6I985ftvr_hJzy3ey?usp=sharing)
-- 📊 [Evaluation Notebook](https://colab.research.google.com/drive/1vzoGxEQMKi1PKQhTyyCyqLHE8Z97K8DY?usp=sharing)
+- � **Fine-tuning Notebook:** [Training Colab](https://colab.research.google.com/drive/1nHWwPOAc5E5H-0O6I985ftvr_hJzy3ey?usp=sharing)
+- 📊 **Evaluation Notebook:** [Evaluation Colab](https://colab.research.google.com/drive/1vzoGxEQMKi1PKQhTyyCyqLHE8Z97K8DY?usp=sharing)
 
 ### Requirements
 ```
@@ -303,14 +393,22 @@ unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git
 ### Struktur Repository
 ```
 LegalLLM/
-├── readme.md                 # Dokumentasi proyek
-├── Data/
-│   ├── Conversation.jsonl    # Data conversational (dalam pengembangan)
-│   └── extracted_text.jsonl  # Data training utama
-└── Notebooks/
-    ├── Eval.ipynb            # Notebook evaluasi model
-    └── Paper_Hukum_Gemma,LLama,Mistral.ipynb  # Training notebook
+├── 📝 readme.md                 # Dokumentasi proyek lengkap
+├── 📁 Data/
+│   ├── 💬 Conversation.jsonl    # Data conversational (dalam pengembangan)
+│   └── 📄 extracted_text.jsonl  # Data training utama (putusan pengadilan)
+└── 📓 Notebooks/
+    ├── 📊 Eval.ipynb            # Notebook evaluasi model
+    └── 🚀 Paper_Hukum_Gemma,LLama,Mistral.ipynb  # Training notebook utama
 ```
+
+### 🔗 Links Penting
+| Resource | Description | Link |
+|----------|-------------|------|
+| 🤗 Model | Production-ready model | [Hugging Face](https://huggingface.co/Haeryz/legal-gemma3-id-16bit) |
+| 🚀 Training | Fine-tuning notebook | [Google Colab](https://colab.research.google.com/drive/1nHWwPOAc5E5H-0O6I985ftvr_hJzy3ey?usp=sharing) |
+| 📊 Evaluation | Model evaluation | [Google Colab](https://colab.research.google.com/drive/1vzoGxEQMKi1PKQhTyyCyqLHE8Z97K8DY?usp=sharing) |
+| 📁 Dataset | Raw training data | [Google Drive](https://drive.google.com/drive/folders/14kWdffZru_ePZ4B58EzS3EO5cW-FLNRa?usp=sharing) |
 
 ### Seed Values
 - **Training Seed:** 3407
@@ -380,12 +478,63 @@ Lihat notebook evaluasi untuk detail error handling dan troubleshooting.
 
 ---
 
-### Contact & Support
+---
 
+## 📞 Contact & Support
+
+<div align="center">
+
+### 👨‍💻 Tim Pengembang
+**Muhammad Hariz Faizul Anwar** & **Nizam Arif**  
+Universitas Muhammadiyah Malang
+
+### 🔗 Links
+[![GitHub](https://img.shields.io/badge/GitHub-LegalLLM-black?style=flat&logo=github)](https://github.com/Haeryz/LegalLLM)
+[![Hugging Face](https://img.shields.io/badge/🤗-Model-yellow?style=flat)](https://huggingface.co/Haeryz/legal-gemma3-id-16bit)
+[![Colab](https://img.shields.io/badge/Colab-Training-orange?style=flat&logo=googlecolab)](https://colab.research.google.com/drive/1nHWwPOAc5E5H-0O6I985ftvr_hJzy3ey?usp=sharing)
+[![Email](https://img.shields.io/badge/Email-Contact-blue?style=flat&logo=gmail)](mailto:muh4mm4dh4r1z@gmail.com)
+
+</div>
+
+### 📧 Kontak
+- **Email Utama:** muh4mm4dh4r1z@gmail.com
 - **GitHub Issues:** [Repository Issues](https://github.com/Haeryz/LegalLLM/issues)
 - **Model Page:** [Hugging Face Model](https://huggingface.co/Haeryz/legal-gemma3-id-16bit)
-- **Email:** muh4mm4dh4r1z@gmail.com
+
+### 🤝 Dukungan
+Jika Anda memerlukan bantuan atau memiliki pertanyaan:
+1. **Buka GitHub Issues** untuk bug reports atau feature requests
+2. **Gunakan email** untuk pertanyaan umum atau kolaborasi
+3. **Check dokumentasi** di Hugging Face model page
 
 ---
 
+## 🙏 Acknowledgments
+
+Terima kasih kepada:
+- **🔥 Unsloth Team** - Framework optimized fine-tuning yang luar biasa
+- **🤖 Google** - Gemma base models dan infrastruktur Colab
+- **🤗 Hugging Face** - Platform model hosting dan tools ecosystem
+- **⚖️ Mahkamah Agung RI** - Sumber data putusan pengadilan yang valuable
+- **🎓 Universitas Muhammadiyah Malang** - Dukungan institusi dan resources
+
+---
+
+## 📄 Lisensi
+
+- **Model:** Apache 2.0 (mengikuti lisensi base Gemma)
+- **Data:** Creative Commons (sesuai ketentuan data publik MA-RI)
+- **Code:** MIT License
+- **Documentation:** Creative Commons Attribution 4.0
+
+---
+
+<div align="center">
+
+**⭐ Jika project ini membantu Anda, mohon berikan star di GitHub! ⭐**
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Haeryz/LegalLLM&type=Date)](https://star-history.com/#Haeryz/LegalLLM&Date)
+
 *Terakhir diupdate: Juli 2025*
+
+</div>
